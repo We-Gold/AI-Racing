@@ -3,16 +3,15 @@ function Car(x, y, dir, vel) {
     this.y = y;
     this.vel = vel;
     this.viewDistance = 50;
-    this.pixels = 10;
+    this.pixels = 15;
     this.viewAngle = 120;
     this.dir = p5.Vector.fromAngle(radians(dir));
     this.width = 20;
     this.length = 40;
     this.sensors = [];
+    this.rotationRate = 3;
 
     this.getPointAtDistance = function(dist, angle) {
-        // let x = this.x + (dist*sin(angle));
-        // let y = this.y + (dist*cos(angle));
         let pos = p5.Vector.fromAngle(this.dir.heading() + radians(angle), dist);
 
         let x = this.x + pos.x;
@@ -37,8 +36,6 @@ function Car(x, y, dir, vel) {
         for(let s = -this.viewAngle/2; s <= this.viewAngle/2; s += this.viewAngle/this.pixels) {
             this.sensors.push(this.getPointAtDistance(this.viewDistance, s));
         }
-
-        // console.log(sensors);
     }
 
     this.classifySensor = function(sensor) {
@@ -73,8 +70,6 @@ function Car(x, y, dir, vel) {
     this.stayInLane = function() {
         let classified = this.classifySensors(this.sensors);
 
-        let rotationRate = 1; // Arbitrary
-
         let leftDistToBlack = 0;
         let rightDistToBlack = classified.length - 1;
 
@@ -88,7 +83,7 @@ function Car(x, y, dir, vel) {
 
         rightDistToBlack = classified.length - 1 - rightDistToBlack;
 
-        this.rotateCar(rotationRate * (leftDistToBlack - rightDistToBlack));
+        this.rotateCar(this.rotationRate * (leftDistToBlack - rightDistToBlack));
     }
 
     this.rotateCar = function(angle) {
